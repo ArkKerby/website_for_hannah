@@ -1,0 +1,27 @@
+{
+  "id": "./",
+  "name": "Hannah's Debut Invitation",
+  "short_name": "Hannah, 18",
+  "description": "A garden invitation for Hannah's eighteenth birthday celebration.",
+  "lang": "en",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "background_color": "#e8deca",
+  "theme_color": "#e8deca",
+  "icons": [
+    {
+      "src": "./icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+# Downloaded source archive is not part of the website or source repository.
+wetransfer_*.zip
+
+# Original source assets; the site uses their web-ready versions instead.
+/photoshots/*.JPG
+/photoshots/web/dsc_9793.jpg
+/assets_design_backgrounds/*_upscayl_*.png
+
+# Keep only the eight full-size portraits currently linked from the invitation.
+# Add a matching ! entry here if another full-size image is added to the page.
+/enhanced_photoshots/web/Best Photo/*
+!/enhanced_photoshots/web/Best Photo/Hannah18th-41.jpg
+!/enhanced_photoshots/web/Best Photo/Dreamy 18th Birthday Garden Portrait.jpg
+!/enhanced_photoshots/web/Best Photo/Eighteenth Birthday Meadow Portrait.jpg
+!/enhanced_photoshots/web/Best Photo/Hannah18th-10.jpg
+!/enhanced_photoshots/web/Best Photo/Hannah18th-29.jpg
+!/enhanced_photoshots/web/Best Photo/Hannah18th-34.jpg
+!/enhanced_photoshots/web/Best Photo/eighteenn_in_full_bloom.jpg
+!/enhanced_photoshots/web/Best Photo/Hannah18th-57.jpg
+
+# Local Vercel and operating-system files.
+.vercel/
+Thumbs.db
+.DS_Store

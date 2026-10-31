@@ -1,0 +1,15 @@
+photoshots/*.JPG
+photoshots/web/dsc_9793.jpg
+assets_design_backgrounds/*_upscayl_*.png
+wetransfer_*.zip
+
+# Keep only the full-size portraits currently linked from the invitation.
+/enhanced_photoshots/web/Best Photo/*
+!/enhanced_photoshots/web/Best Photo/Hannah18th-41.jpg
+!/enhanced_photoshots/web/Best Photo/Dreamy 18th Birthday Garden Portrait.jpg
+!/enhanced_photoshots/web/Best Photo/Eighteenth Birthday Meadow Portrait.jpg
+!/enhanced_photoshots/web/Best Photo/Hannah18th-10.jpg
+!/enhanced_photoshots/web/Best Photo/Hannah18th-29.jpg
+!/enhanced_photoshots/web/Best Photo/Hannah18th-34.jpg
+!/enhanced_photoshots/web/Best Photo/eighteenn_in_full_bloom.jpg
+!/enhanced_photoshots/web/Best Photo/Hannah18th-57.jpg

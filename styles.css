@@ -325,23 +325,24 @@ h1 span { display: block; }
 .cover-meta {
   position: relative;
   z-index: 4;
-  display: inline-block;
-  width: min(14rem, 100%);
-  margin: 0 0 0 1rem;
-  color: #ffffff;
+  display: block;
+  width: min(25rem, 96%);
+  margin: .55rem 0 0 .45rem;
+  color: #71384b;
   font-size: clamp(1rem, 1.5vw, 1.3rem);
-  line-height: 1.05;
-  transform: rotate(-2deg);
+  line-height: 1.12;
 }
 .invitation-reminder {
-  max-width: min(25rem, 95%);
+  display: block;
+  max-width: min(27rem, 96%);
   margin: .75rem 0 .2rem .45rem;
-  color: #FFFFFF;
+  color: #71384b;
   font-family: var(--serif);
-  font-size: clamp(1.5rem, 1.5vw, 1.08rem);
+  font-size: clamp(.9rem, 1.5vw, 1.08rem);
   font-weight: 700;
   letter-spacing: .035em;
   line-height: 1.2;
+  text-shadow: 0 1px rgba(232, 222, 202, .8);
 }
 .swan-pair {
   position: absolute;
@@ -687,7 +688,7 @@ h2 {
   .entourage-grid { grid-template-columns: minmax(0, 1fr); gap: .75rem; }
   .entourage-group summary { min-height: 3.5rem; padding: .65rem .8rem; }
   .entourage-group ol { grid-template-columns: minmax(0, 1fr); gap: .35rem; padding: .1rem .85rem 1rem 2.4rem; font-size: 1.05rem; }
-  .scene-cover { min-height: 940px; padding: 0; }
+  .scene-cover { min-height: 1120px; padding: 0; }
   .cover-logo { top: .65rem; left: .85rem; font-size: 1.55rem; }
   .cover-card { top: 13%; left: 6%; width: 88%; }
   .cover-card .eyebrow { margin-bottom: .55rem; font-size: 1.15rem; }
@@ -701,9 +702,9 @@ h2 {
   .turning-phrase { font-size: clamp(1.35rem, 5vw, 1.8rem); }
   .cover-card .ornate-link { margin-top: clamp(5.5rem, 24vw, 7rem); }
   .cover-card .turning-subtitle + .ornate-link { margin-top: 1rem; }
-  .cover-meta { width: min(12rem, 100%); margin: .4rem 0 0 .4rem; font-size: clamp(.95rem, 4vw, 1.08rem); }
+  .cover-meta { width: min(18rem, 100%); margin: .55rem 0 0 .45rem; font-size: clamp(.95rem, 4vw, 1.08rem); }
   .invitation-reminder { max-width: 100%; margin: .65rem 0 .2rem .45rem; font-size: clamp(.78rem, 3.4vw, .95rem); }
-  .cover-polaroids { top: 51%; right: 3%; left: 3%; width: 94%; height: 40%; }
+  .cover-polaroids { top: 63%; right: 3%; left: 3%; width: 94%; height: 34%; }
   .cover-polaroids { --cover-one-width: 43%; --cover-two-width: 43%; --cover-three-width: 48%; }
   .cover-polaroid { padding: .4rem .4rem 1.85rem; }
   .cover-polaroid-one { top: 0; left: 2%; }
@@ -734,13 +735,15 @@ h2 {
 }
 @media (max-width: 420px) {
   .cover-logo { top: 3.1rem; }
+  .scene-cover { min-height: 1220px; }
+  .cover-polaroids { top: 65%; height: 30%; }
   .photo-card { border-width: 3px; border-radius: .2rem; }
   .photo-kicker { font-size: 1rem; }
   .photo-description { font-size: .78rem; }
   .photo-open { font-size: .65rem; }
 }
 @media (max-height: 740px) and (max-width: 759px) {
-  .scene-cover { min-height: 940px; padding: 0; }
+  .scene-cover { min-height: max(1220px, 150svh); padding: 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {

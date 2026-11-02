@@ -105,15 +105,19 @@
       .envelope-button:focus-visible { outline: 3px solid #a64f67; outline-offset: 8px; border-radius: 8px; }
       .envelope__back, .envelope__front, .envelope__flap, .envelope__letter { position: absolute; }
       .envelope__back { inset: 0; border: 1px solid rgba(133, 82, 69, .55); border-radius: 9px; background: linear-gradient(145deg, #efcfca, #dbaeb0); box-shadow: inset 0 0 0 7px rgba(255, 247, 237, .3), inset 0 0 0 9px rgba(166, 79, 103, .18); }
-      .envelope__letter { z-index: 1; left: 9%; right: 9%; top: 8%; height: 82%; display: grid; place-content: center; gap: 12px; border: 1px solid #c5a47d; outline: 1px solid rgba(197, 164, 125, .45); outline-offset: -8px; background: linear-gradient(135deg, #fffaf1, #f5e8dc); color: #794653; box-shadow: 0 8px 20px rgba(73, 56, 47, .12); transition: transform .8s cubic-bezier(.2,.75,.25,1) .2s; }
+      .envelope__letter { z-index: 1; left: 9%; right: 9%; top: 8%; height: 82%; display: grid; place-content: center; gap: 12px; transform: translateY(0); opacity: 0; border: 1px solid #c5a47d; outline: 1px solid rgba(197, 164, 125, .45); outline-offset: -8px; background: linear-gradient(135deg, #fffaf1, #f5e8dc); color: #794653; box-shadow: 0 8px 20px rgba(73, 56, 47, .12); transition: transform .8s cubic-bezier(.2,.75,.25,1) .18s, opacity .25s ease .18s; }
+      .envelope__letter span { opacity: 0; transition: opacity .3s ease; }
       .envelope__letter span:first-child { font: 700 clamp(2.5rem, 7vw, 4.2rem)/.95 'Caveat', cursive; }
       .envelope__letter span:last-child { font: italic 700 clamp(1rem, 2vw, 1.35rem)/1.2 'Playfair Display', Georgia, serif; letter-spacing: .02em; }
-      .envelope__front { z-index: 2; inset: 0; overflow: hidden; border-radius: 5px; background: linear-gradient(145deg, transparent 49.7%, #dbaeb0 50%) left/50.1% 100% no-repeat, linear-gradient(215deg, transparent 49.7%, #dbaeb0 50%) right/50.1% 100% no-repeat; }
-      .envelope__front::after { position: absolute; inset: 0; content: ''; background: linear-gradient(32deg, transparent 49.5%, #e8c6c0 50%) left bottom/50.1% 50% no-repeat, linear-gradient(-32deg, transparent 49.5%, #e8c6c0 50%) right bottom/50.1% 50% no-repeat; }
-      .envelope__flap { z-index: 3; inset: 0 0 auto; height: 58%; transform-origin: top; clip-path: polygon(0 0, 100% 0, 50% 100%); background: linear-gradient(145deg, #f1d9cf, #d6a4a7); transition: transform .65s ease, z-index 0s .32s; }
+      .envelope__front { z-index: 2; inset: 0; overflow: hidden; border-radius: 5px; clip-path: polygon(0 40%, 50% 76%, 100% 40%, 100% 100%, 0 100%); background: linear-gradient(145deg, #e8c5c2, #d8a5aa); }
+      .envelope__front::before { position: absolute; bottom: 8%; left: 50%; color: rgba(139, 99, 61, .78); content: '❧  ✿  ❧'; font: 600 clamp(1.2rem, 3vw, 1.8rem)/1 'Cormorant Garamond', Georgia, serif; letter-spacing: .08em; white-space: nowrap; transform: translateX(-50%); }
+      .envelope__front::after { position: absolute; inset: 0; border: 1px solid rgba(164, 91, 103, .24); content: ''; }
+      .envelope__flap { z-index: 3; inset: 0 0 auto; height: 55%; transform-origin: top; clip-path: polygon(0 0, 100% 0, 50% 100%); background: linear-gradient(145deg, #f1d9cf, #d6a4a7); transition: transform .65s ease, z-index 0s .32s; }
+      .envelope__flap::after { position: absolute; top: 13%; left: 50%; color: rgba(139, 99, 61, .65); content: '✧  ·  ✧'; font: 600 clamp(1rem, 2vw, 1.3rem)/1 'Cormorant Garamond', Georgia, serif; letter-spacing: .16em; white-space: nowrap; transform: translateX(-50%); }
       .envelope__seal { position: absolute; z-index: 4; top: 43%; left: 50%; display: grid; width: clamp(54px, 8vw, 76px); aspect-ratio: 1; place-items: center; transform: translate(-50%, -50%); border: 2px solid rgba(255, 231, 213, .58); border-radius: 50%; background: radial-gradient(circle at 32% 27%, #c66f83, #a64f67 62%, #843d52); color: #fff2e6; font: 700 clamp(1.3rem, 2vw, 1.7rem) 'Playfair Display', Georgia, serif; box-shadow: 0 0 0 4px rgba(166, 79, 103, .18), 0 5px 14px rgba(73, 56, 47, .28); transition: opacity .25s ease, transform .25s ease; }
       .envelope-button.is-open .envelope__flap { z-index: 0; transform: rotateX(180deg); }
-      .envelope-button.is-open .envelope__letter { transform: translateY(-53%); }
+      .envelope-button.is-open .envelope__letter { transform: translateY(-53%); opacity: 1; }
+      .envelope-button.is-open .envelope__letter span { opacity: 1; transition-delay: .45s; }
       .envelope-button.is-open .envelope__seal { opacity: 0; transform: translate(-50%, -50%) scale(.7); }
       .envelope-intro__hint { margin: 0; color: #694b31; font: 700 clamp(1.35rem, 2.6vw, 1.8rem)/1.2 'Caveat', cursive; text-shadow: 0 1px 12px rgba(245, 237, 223, .9); }
       .envelope-intro__skip { margin-top: 14px; padding: 8px 12px; border: 0; background: transparent; color: #794653; font: inherit; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }

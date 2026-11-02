@@ -37,6 +37,8 @@ In the Vercel project settings, add these two Environment Variables for Producti
 | `RSVP_APPS_SCRIPT_URL` | The deployed Apps Script `/exec` URL |
 | `RSVP_SHARED_SECRET` | The exact same random secret stored in Script Properties |
 
+Use these names exactly. `RSVP_SHARED_SECRET` is the shared key in both Vercel and Apps Script. `RSVP_SPREADSHEET_ID` is only an Apps Script property containing the Google Sheet ID; `RSVP_SPREADSHEET_SECRET` is not used by this code.
+
 Keep the secret out of `index.html`, this repository, and messages. Redeploy the Vercel site after saving the variables. Once set, the site can submit the form, update the Sheet, and email the receipt. If either variable is missing, the page will say the confirmation service is not connected instead of claiming an RSVP succeeded.
 
 ## Confirmation messages

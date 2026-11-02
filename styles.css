@@ -753,3 +753,75 @@ h2 {
   .petal-rain { display: none; }
   .ambient-background__layer { animation: none !important; transform: none !important; transition-duration: .01ms !important; }
 }
+
+/* Mobile gallery: preserve each photo's full image and give every Polaroid room. */
+@media (max-width: 759px) {
+  .gallery-viewport {
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+    padding: .9rem;
+  }
+
+  .gallery-world {
+    position: relative;
+    inset: auto;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+    gap: 1.5rem 1rem;
+    padding: .45rem;
+    transform-origin: center top;
+  }
+
+  .photo-card,
+  .photo-card:nth-child(1), .photo-card:nth-child(2),
+  .photo-card:nth-child(3), .photo-card:nth-child(4),
+  .photo-card:nth-child(5), .photo-card:nth-child(6),
+  .photo-card:nth-child(7), .photo-card:nth-child(8) {
+    position: relative;
+    inset: auto;
+    width: 100%;
+    height: auto;
+    aspect-ratio: auto;
+    --photo-rotation: 0deg;
+  }
+
+  .photo-card:nth-child(1) { --photo-rotation: -1.2deg; }
+  .photo-card:nth-child(2) { --photo-rotation: 1.1deg; }
+  .photo-card:nth-child(3) { --photo-rotation: -.8deg; }
+  .photo-card:nth-child(4) { --photo-rotation: 1.3deg; }
+  .photo-card:nth-child(5) { --photo-rotation: -.9deg; }
+  .photo-card:nth-child(6) { --photo-rotation: 1deg; }
+  .photo-card:nth-child(7) { --photo-rotation: -1.1deg; }
+  .photo-card:nth-child(8) { --photo-rotation: .8deg; }
+
+  .photo-card { transform: rotate(var(--photo-rotation, 0deg)); }
+  .photo-card.is-active,
+  .photo-card:hover { transform: rotate(0deg) scale(1.025); }
+  .photo-card.photo-portrait { aspect-ratio: auto; }
+
+  .photo-card a {
+    position: relative;
+    inset: auto;
+    grid-template-rows: auto auto;
+  }
+
+  .photo-card img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3;
+    object-fit: contain;
+    background: #e3d7c7;
+  }
+
+  .photo-card.photo-portrait img { aspect-ratio: 2 / 3; }
+  .photo-card figcaption { padding: .35rem .3rem .45rem; }
+}
+
+@media (max-width: 420px) {
+  .gallery-world {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.4rem;
+  }
+}

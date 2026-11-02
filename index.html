@@ -692,6 +692,15 @@
         const world = document.getElementById('gallery-world');
         const cards = [...document.querySelectorAll('.photo-card')];
         const hint = document.getElementById('gallery-hint');
+        const gallerySupportsHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+        const defaultHint = gallerySupportsHover
+          ? 'Hover or focus on a polaroid to bring it closer. Move your pointer out of the gallery to reset.'
+          : 'Tap a photograph to open it at full size.';
+        if (hint) hint.textContent = defaultHint;
+        if (!gallerySupportsHover) {
+          const intro = document.querySelector('.gallery-intro');
+          if (intro) intro.textContent = 'Tap a photograph to open it at full size.';
+        }
         let activeCard = null;
         let focusTimer;
 
@@ -715,20 +724,24 @@
           cards.forEach((card) => card.classList.remove('is-active'));
           viewport.classList.remove('is-zoomed');
           activeCard = null;
-          hint.textContent = 'Hover or focus on a polaroid to bring it closer. Move your pointer out of the gallery to reset.';
+          hint.textContent = defaultHint;
         }
 
         cards.forEach((card) => {
-          card.addEventListener('pointerenter', () => {
-            if (activeCard === card) return;
-            window.clearTimeout(focusTimer);
-            focusTimer = window.setTimeout(() => focusCard(card), activeCard ? 180 : 60);
+          if (gallerySupportsHover) {
+            card.addEventListener('pointerenter', () => {
+              if (activeCard === card) return;
+              window.clearTimeout(focusTimer);
+              focusTimer = window.setTimeout(() => focusCard(card), activeCard ? 180 : 60);
+            });
+            card.addEventListener('pointerleave', () => window.clearTimeout(focusTimer));
+          }
+          card.addEventListener('focusin', (event) => {
+            if (event.target.matches(':focus-visible')) focusCard(card);
           });
-          card.addEventListener('pointerleave', () => window.clearTimeout(focusTimer));
-          card.addEventListener('focusin', () => focusCard(card));
         });
 
-        viewport.addEventListener('pointerleave', resetCamera);
+        if (gallerySupportsHover) viewport.addEventListener('pointerleave', resetCamera);
         viewport.addEventListener('focusout', (event) => {
           if (!viewport.contains(event.relatedTarget)) resetCamera();
         });

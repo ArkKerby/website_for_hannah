@@ -44,3 +44,13 @@ Keep the secret out of `index.html`, this repository, and messages. Redeploy the
 Deploy the Apps Script as `marklaguador09@gmail.com` so Google sends the messages from that account. A Yes confirmation includes Hannah's event date and venue, the guest's entry code, and the instruction to present the email at the entrance. A No response receives an acknowledgement that is not an entry pass.
 
 The web app runs with the deploying account's access and sends the mail using Apps Script's Mail service. See Google's [web app deployment guide](https://developers.google.com/apps-script/guides/web) and [Mail service reference](https://developers.google.com/apps-script/reference/mail/mail-app) for the deployment and authorization model.
+
+## Safe setup check
+
+After updating `apps-script/Code.gs`, select `authorizeRsvpServices` in the Apps Script function picker and click **Run**. Approve the spreadsheet and email permissions while signed in as the web app owner. This creates the response tab and headers but sends no email.
+
+Then choose **Deploy -> Manage deployments**, edit the existing web app deployment, select **New version**, and deploy it. Keep **Execute as** set to the owner and access set to **Anyone**. This preserves the existing `/exec` URL. The updated code supports a no-email setup check. After the Vercel deployment completes, open:
+
+`https://websiteforhannah.vercel.app/api/rsvp?diagnose=1`
+
+The check uses the production Vercel secret server-side, verifies that it matches the Apps Script property, checks email authorization and quota, and creates the `RSVP Responses` tab with headers if needed. It does not submit a guest RSVP or send email. A successful result contains `"spreadsheetAccessible":true`, `"responseTabReady":true`, and `"emailServiceReady":true`. If it fails, the response names the setup issue without displaying either secret.

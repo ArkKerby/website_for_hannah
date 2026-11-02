@@ -8,16 +8,47 @@ function doPost(event) {
   try {
     payload = JSON.parse(event && event.postData && event.postData.contents || '{}');
   } catch (error) {
-    return json_({ ok: false, error: 'Invalid request.' });
+    return json_({ ok: false, code: 'INVALID_JSON', error: 'Invalid request.' });
   }
 
   const properties = PropertiesService.getScriptProperties();
   const expectedSecret = properties.getProperty('RSVP_SHARED_SECRET');
   const spreadsheetId = properties.getProperty('RSVP_SPREADSHEET_ID');
-  if (!expectedSecret || !constantTimeEquals_(String(payload.secret || ''), expectedSecret)) {
-    return json_({ ok: false, error: 'Unauthorized.' });
+  if (!expectedSecret) {
+    return json_({ ok: false, code: 'SHARED_SECRET_NOT_SET', error: 'RSVP_SHARED_SECRET is not set.' });
   }
-  if (!spreadsheetId) return json_({ ok: false, error: 'Spreadsheet setup is incomplete.' });
+  if (!constantTimeEquals_(String(payload.secret || ''), expectedSecret)) {
+    return json_({ ok: false, code: 'SHARED_SECRET_MISMATCH', error: 'The RSVP shared secrets do not match.' });
+  }
+  if (!spreadsheetId) {
+    return json_({ ok: false, code: 'SPREADSHEET_ID_NOT_SET', error: 'RSVP_SPREADSHEET_ID is not set.' });
+  }
+
+  // Safe setup check used by /api/rsvp?diagnose=1. It writes only the response
+  // tab headers and sends no email or guest response.
+  if (payload.action === 'health') {
+    try {
+      const spreadsheet = SpreadsheetApp.openById(spreadsheetId);
+      let sheet = spreadsheet.getSheetByName(RESPONSE_TAB);
+      if (!sheet) sheet = spreadsheet.insertSheet(RESPONSE_TAB);
+      ensureHeaders_(sheet);
+      SpreadsheetApp.flush();
+    } catch (error) {
+      console.error('RSVP setup check could not access or prepare the spreadsheet.', error && error.stack || error);
+      return json_({ ok: false, code: 'SPREADSHEET_ACCESS_FAILED', error: 'The RSVP spreadsheet could not be accessed or prepared.' });
+    }
+
+    try {
+      const emailQuotaRemaining = MailApp.getRemainingDailyQuota();
+      if (emailQuotaRemaining < 1) {
+        return json_({ ok: false, code: 'MAIL_QUOTA_EXHAUSTED', spreadsheetAccessible: true, responseTabReady: true, error: 'No email quota remains today.' });
+      }
+      return json_({ ok: true, diagnostic: true, spreadsheetAccessible: true, responseTabReady: true, emailServiceReady: true });
+    } catch (error) {
+      console.error('RSVP setup check could not access the email service.', error && error.stack || error);
+      return json_({ ok: false, code: 'MAIL_SERVICE_NOT_AUTHORIZED', spreadsheetAccessible: true, responseTabReady: true, error: 'The Apps Script email service needs authorization.' });
+    }
+  }
 
   const name = String(payload.name || '').replace(/[\u0000-\u001f\u007f]/g, ' ').replace(/\s+/g, ' ').trim();
   const email = String(payload.email || '').trim();
@@ -27,13 +58,13 @@ function doPost(event) {
   const submittedAt = String(payload.submittedAt || new Date().toISOString());
 
   if (!name || name.length > 100 || email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    return json_({ ok: false, error: 'Invalid name or email.' });
+    return json_({ ok: false, code: 'INVALID_NAME_OR_EMAIL', error: 'Invalid name or email.' });
   }
   if (attendance !== 'Yes' && attendance !== 'No') {
-    return json_({ ok: false, error: 'Invalid attendance response.' });
+    return json_({ ok: false, code: 'INVALID_ATTENDANCE', error: 'Invalid attendance response.' });
   }
   if ((attendance === 'Yes' && !/^HANNAH18-[A-F0-9]{8}$/.test(ticketCode)) || (attendance === 'No' && ticketCode !== '')) {
-    return json_({ ok: false, error: 'Invalid ticket code.' });
+    return json_({ ok: false, code: 'INVALID_TICKET_CODE', error: 'Invalid ticket code.' });
   }
 
   const lock = LockService.getScriptLock();
@@ -75,15 +106,34 @@ function doPost(event) {
       SpreadsheetApp.flush();
       return json_({ ok: true, saved: true, emailSent: true });
     } catch (mailError) {
+      console.error('RSVP was saved, but the confirmation email could not be sent.', mailError && mailError.stack || mailError);
       sheet.getRange(row, columns['Confirmation Email Sent']).setValue('No');
       SpreadsheetApp.flush();
-      return json_({ ok: false, saved: true, emailSent: false, error: 'Email could not be sent.' });
+      return json_({ ok: false, saved: true, emailSent: false, code: 'EMAIL_SEND_FAILED', error: 'Email could not be sent.' });
     }
   } catch (error) {
-    return json_({ ok: false, error: 'RSVP could not be saved. Check the sheet permissions and setup.' });
+    console.error('RSVP could not be saved to the spreadsheet.', error && error.stack || error);
+    return json_({ ok: false, code: 'SPREADSHEET_WRITE_FAILED', error: 'RSVP could not be saved. Check the sheet permissions and setup.' });
   } finally {
     try { lock.releaseLock(); } catch (error) { /* The lock may not have been acquired. */ }
   }
+}
+
+// Run this once from the Apps Script editor while signed in as the account
+// that owns the web app. It prompts for the spreadsheet and email permissions
+// without sending a message, then prepares the response tab.
+function authorizeRsvpServices() {
+  const spreadsheetId = PropertiesService.getScriptProperties().getProperty('RSVP_SPREADSHEET_ID');
+  if (!spreadsheetId) throw new Error('Set RSVP_SPREADSHEET_ID in Script Properties first.');
+
+  const spreadsheet = SpreadsheetApp.openById(spreadsheetId);
+  let sheet = spreadsheet.getSheetByName(RESPONSE_TAB);
+  if (!sheet) sheet = spreadsheet.insertSheet(RESPONSE_TAB);
+  ensureHeaders_(sheet);
+  SpreadsheetApp.flush();
+
+  const emailQuotaRemaining = MailApp.getRemainingDailyQuota();
+  console.log('RSVP services authorized. Response tab is ready. Remaining email recipients today: ' + emailQuotaRemaining);
 }
 
 function ensureHeaders_(sheet) {

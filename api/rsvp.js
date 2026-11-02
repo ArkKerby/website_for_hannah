@@ -14,12 +14,89 @@ function sendJson(res, status, body) {
   res.status(status).json(body);
 }
 
+async function postToAppsScript(url, payload) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 20000);
+  try {
+    const upstream = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+      signal: controller.signal
+    });
+
+    let result = {};
+    try { result = await upstream.json(); } catch { /* Google may return an HTML deployment error. */ }
+    return { upstreamOk: upstream.ok, result };
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+function getDiagnosticIssue(code) {
+  const messages = {
+    SHARED_SECRET_NOT_SET: 'Apps Script is missing the RSVP_SHARED_SECRET script property.',
+    SHARED_SECRET_MISMATCH: 'The Vercel and Apps Script shared secrets do not match.',
+    SPREADSHEET_ID_NOT_SET: 'Apps Script is missing the RSVP_SPREADSHEET_ID script property.',
+    SPREADSHEET_ACCESS_FAILED: 'Apps Script cannot access or edit the configured Google Sheet.',
+    MAIL_QUOTA_EXHAUSTED: 'The Apps Script account has no email sending quota remaining today.',
+    MAIL_SERVICE_NOT_AUTHORIZED: 'Apps Script email permission has not been authorized. Run authorizeRsvpServices in the Apps Script editor.',
+    INVALID_JSON: 'Apps Script did not receive a valid JSON response.',
+    BACKEND_UNAVAILABLE: 'The Apps Script deployment did not return the expected diagnostic response.'
+  };
+  return messages[code] || messages.BACKEND_UNAVAILABLE;
+}
+
 module.exports = async function rsvpHandler(req, res) {
   const appsScriptUrl = process.env.RSVP_APPS_SCRIPT_URL || '';
   const sharedSecret = process.env.RSVP_SHARED_SECRET || '';
   const configured = /^https:\/\/script\.google\.com\/macros\/s\/[^/]+\/exec(?:\?.*)?$/.test(appsScriptUrl) && sharedSecret.length >= 32;
 
   if (req.method === 'GET') {
+    const url = new URL(req.url || '/', `https://${req.headers.host || 'localhost'}`);
+    if (url.searchParams.get('diagnose') === '1') {
+      if (!configured) {
+        return sendJson(res, 503, { ok: false, configured: false, diagnostic: true, issue: 'VERCEL_CONFIGURATION_MISSING' });
+      }
+
+      try {
+        const { upstreamOk, result } = await postToAppsScript(appsScriptUrl, {
+          action: 'health',
+          secret: sharedSecret
+        });
+        if (!upstreamOk || !result.ok) {
+          const issue = result.code || 'BACKEND_UNAVAILABLE';
+          console.error('[RSVP diagnostic] Apps Script check failed:', issue);
+          return sendJson(res, 502, {
+            ok: false,
+            configured: true,
+            diagnostic: true,
+            issue,
+            spreadsheetAccessible: result.spreadsheetAccessible === true,
+            responseTabReady: result.responseTabReady === true,
+            message: getDiagnosticIssue(issue)
+          });
+        }
+
+        return sendJson(res, 200, {
+          ok: true,
+          configured: true,
+          diagnostic: true,
+          spreadsheetAccessible: result.spreadsheetAccessible === true,
+          responseTabReady: result.responseTabReady === true,
+          emailServiceReady: result.emailServiceReady === true
+        });
+      } catch (error) {
+        console.error('[RSVP diagnostic] Apps Script could not be reached:', error && error.name || 'network error');
+        return sendJson(res, 502, {
+          ok: false,
+          configured: true,
+          diagnostic: true,
+          issue: 'BACKEND_UNAVAILABLE',
+          message: getDiagnosticIssue('BACKEND_UNAVAILABLE')
+        });
+      }
+    }
     return sendJson(res, 200, { ok: true, configured });
   }
 
@@ -60,47 +137,42 @@ module.exports = async function rsvpHandler(req, res) {
     : '';
   const submittedAt = new Date().toISOString();
 
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 20000);
   try {
-    const upstream = await fetch(appsScriptUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        secret: sharedSecret,
-        name,
-        email,
-        attendance,
-        tradition,
-        ticketCode,
-        submittedAt
-      }),
-      signal: controller.signal
+    const { upstreamOk, result } = await postToAppsScript(appsScriptUrl, {
+      secret: sharedSecret,
+      name,
+      email,
+      attendance,
+      tradition,
+      ticketCode,
+      submittedAt
     });
 
-    let result = {};
-    try { result = await upstream.json(); } catch { /* Apps Script may return an HTML deployment error. */ }
+    if (!upstreamOk || !result.ok) {
+      const code = result.code || 'BACKEND_UNAVAILABLE';
+      console.error('[RSVP submission] Apps Script rejected request:', code);
 
-    if (!upstream.ok || !result.ok) {
       if (result.saved && result.emailSent === false) {
         return sendJson(res, 502, {
           ok: false,
-          message: 'Your RSVP was saved, but the confirmation email could not be sent. Please try again or contact marklaguador09@gmail.com.'
+          code,
+          message: 'Your RSVP was saved, but the confirmation email could not be sent. Please contact marklaguador09@gmail.com.'
         });
       }
+
       return sendJson(res, 502, {
         ok: false,
+        code,
         message: 'We could not record and email your RSVP yet. Please try again in a moment.'
       });
     }
 
     return sendJson(res, 200, { ok: true, ticketCode });
-  } catch {
+  } catch (error) {
+    console.error('[RSVP submission] Apps Script request failed:', error && error.name || 'network error');
     return sendJson(res, 502, {
       ok: false,
       message: 'The confirmation service could not be reached. Please try again in a moment.'
     });
-  } finally {
-    clearTimeout(timeout);
   }
 };

@@ -360,8 +360,29 @@
           <p class="rsvp-policy">Strictly no Plus 1</p>
           <p class="eyebrow">We look forward to celebrating with you</p>
           <h2 id="rsvp-title">Kindly RSVP</h2>
-          <p class="rsvp-copy">Please let us know if you will be joining us for Hannah's special day.</p>
-          <a class="ornate-link rsvp-link" href="https://forms.gle/LyBZqELhUhTtxg9o7" target="_blank" rel="noopener noreferrer"><span>RSVP here</span></a>
+          <p class="rsvp-copy">Tell us if you can join Hannah, and we'll send your personal entrance confirmation by email.</p>
+          <form class="rsvp-form" id="rsvp-form" autocomplete="on">
+            <label class="rsvp-field" for="rsvp-email">
+              <span>Email <span class="rsvp-required">(Required)</span></span>
+              <input id="rsvp-email" name="email" type="email" autocomplete="email" maxlength="254" required>
+            </label>
+            <label class="rsvp-field" for="rsvp-name">
+              <span>Name <span class="rsvp-required">(Required)</span></span>
+              <input id="rsvp-name" name="name" type="text" autocomplete="name" maxlength="100" required>
+            </label>
+            <fieldset class="rsvp-attendance">
+              <legend>Will you be joining us?</legend>
+              <label class="rsvp-choice"><input type="radio" name="attendance" value="Yes" required><span>Yes, I'll be there</span></label>
+              <label class="rsvp-choice"><input type="radio" name="attendance" value="No" required><span>No, I can't attend</span></label>
+            </fieldset>
+            <div class="rsvp-trap" aria-hidden="true">
+              <label for="rsvp-website">Leave this field empty</label>
+              <input id="rsvp-website" name="website" type="text" tabindex="-1" autocomplete="off">
+            </div>
+            <button class="ornate-link rsvp-submit" type="submit"><span>Confirm my RSVP</span></button>
+            <p class="rsvp-response" id="rsvp-response" role="status" aria-live="polite"></p>
+            <p class="rsvp-note">Your confirmation is for the named guest only. Please show the email at the entrance.</p>
+          </form>
         </div>
         <div class="letter-frame" id="letter" aria-labelledby="letter-title">
           <p class="eyebrow">With love, Hannah</p>
@@ -478,6 +499,105 @@
         });
         window.addEventListener('resize', () => {
           if (activeCard) focusCard(activeCard);
+        });
+      })();
+    </script>
+    <script>
+      (() => {
+        const form = document.getElementById('rsvp-form');
+        if (!form) return;
+
+        const button = form.querySelector('.rsvp-submit');
+        const buttonLabel = button.querySelector('span');
+        const responseText = document.getElementById('rsvp-response');
+        const initialButtonLabel = buttonLabel.textContent;
+
+        const normalizeName = (value) => value
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .toLocaleLowerCase()
+          .replace(/[^a-z0-9]+/g, ' ')
+          .trim();
+
+        function getTradition(name) {
+          const normalizedName = normalizeName(name);
+          for (const group of document.querySelectorAll('.entourage-group')) {
+            const names = [...group.querySelectorAll('li')].map((item) => normalizeName(item.textContent));
+            if (names.includes(normalizedName)) {
+              return group.querySelector('summary span')?.textContent.trim() || 'Other Guest';
+            }
+          }
+          return 'Other Guest';
+        }
+
+        button.disabled = true;
+        buttonLabel.textContent = 'Preparing RSVP…';
+        responseText.textContent = 'Checking the email confirmation service…';
+        responseText.dataset.state = 'pending';
+        fetch('/api/rsvp', { headers: { Accept: 'application/json' } })
+          .then((result) => result.json())
+          .then((service) => {
+            if (!service.configured) {
+              responseText.textContent = 'RSVP confirmations are still being connected. Please check back soon.';
+              responseText.dataset.state = 'pending';
+              buttonLabel.textContent = initialButtonLabel;
+              return;
+            }
+            responseText.textContent = '';
+            responseText.dataset.state = '';
+            button.disabled = false;
+            buttonLabel.textContent = initialButtonLabel;
+          })
+          .catch(() => {
+            responseText.textContent = 'The RSVP confirmation service is not reachable right now. Please check back soon.';
+            responseText.dataset.state = 'error';
+            buttonLabel.textContent = initialButtonLabel;
+          });
+
+        form.addEventListener('submit', async (event) => {
+          event.preventDefault();
+          if (!form.reportValidity()) return;
+
+          const values = new FormData(form);
+          const submission = {
+            email: String(values.get('email') || '').trim(),
+            name: String(values.get('name') || '').trim(),
+            attendance: String(values.get('attendance') || ''),
+            tradition: getTradition(String(values.get('name') || '')),
+            website: String(values.get('website') || '')
+          };
+
+          button.disabled = true;
+          button.setAttribute('aria-busy', 'true');
+          buttonLabel.textContent = 'Sending your RSVP…';
+          responseText.textContent = 'Sending your response and preparing your email confirmation…';
+          responseText.dataset.state = '';
+
+          try {
+            const result = await fetch('/api/rsvp', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(submission)
+            });
+            const receipt = await result.json().catch(() => ({}));
+            if (!result.ok || !receipt.ok) {
+              throw new Error(receipt.message || 'We could not confirm your RSVP yet. Please try again in a moment.');
+            }
+
+            responseText.dataset.state = 'success';
+            responseText.textContent = submission.attendance === 'Yes'
+              ? `You're confirmed. Check ${submission.email} for your entrance email and ticket code${receipt.ticketCode ? ` ${receipt.ticketCode}` : ''}. Strictly no Plus 1.`
+              : `Thank you for letting us know. Your response was recorded and a confirmation was sent to ${submission.email}.`;
+          } catch (error) {
+            responseText.dataset.state = 'error';
+            responseText.textContent = error instanceof TypeError
+              ? 'The RSVP confirmation service could not be reached. Your response may not have been recorded; please try again later.'
+              : error.message;
+          } finally {
+            button.disabled = false;
+            button.removeAttribute('aria-busy');
+            buttonLabel.textContent = initialButtonLabel;
+          }
         });
       })();
     </script>

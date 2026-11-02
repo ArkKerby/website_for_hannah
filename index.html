@@ -17,6 +17,91 @@
     <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png">
     <link rel="apple-touch-icon" href="./icons/icon-192.png">
     <link rel="stylesheet" href="styles.css">
+    <style>
+      html, body { margin: 0 !important; padding: 0 !important; }
+      .site-nav {
+        position: absolute !important;
+        z-index: 8 !important;
+        top: 1.15rem !important;
+        right: clamp(1rem, 4vw, 4rem) !important;
+        left: auto !important;
+        box-sizing: border-box !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: clamp(12px, 2vw, 32px) !important;
+        width: auto !important;
+        max-width: calc(100% - 2rem) !important;
+        min-height: 0 !important;
+        height: auto !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        border: 0 !important;
+        box-shadow: none !important;
+        background: transparent !important;
+        -webkit-backdrop-filter: none !important;
+        backdrop-filter: none !important;
+      }
+      .site-nav::before, .site-nav::after { display: none !important; content: none !important; }
+      .scene > .balustrade { z-index: -1 !important; pointer-events: none !important; }
+      .cover-card, .cover-polaroids, .scroll-note, .gallery-content, .detail-card,
+      .entourage-content, .letter-frame {
+        position: relative;
+        z-index: 2;
+      }
+      .cover-card { position: absolute; z-index: 5; }
+      .cover-polaroids { position: absolute; z-index: 4; }
+      .scroll-note { position: absolute; z-index: 3; }
+      .music-player { position: fixed; z-index: 30; right: 1.1rem; bottom: 1.1rem; display: grid; justify-items: center; gap: .35rem; }
+      .music-disc { display: grid; justify-items: center; gap: .35rem; padding: 0; border: 0; color: #71384b; background: transparent; cursor: pointer; }
+      .music-disc:focus-visible { outline: 3px solid #704b20; outline-offset: 5px; border-radius: 50%; }
+      .music-disc__record { display: grid; width: clamp(3.5rem, 7vw, 4.5rem); aspect-ratio: 1; place-items: center; border: 2px solid rgba(255, 242, 226, .75); border-radius: 50%; background: repeating-radial-gradient(circle, #402c37 0 2px, #543341 2px 3px, #382631 3px 5px); box-shadow: 0 4px 14px rgba(54, 35, 44, .32); }
+      .music-disc__label { display: grid; width: 36%; aspect-ratio: 1; place-items: center; border: 2px solid #f0c8bb; border-radius: 50%; color: #fff1e6; background: radial-gradient(circle at 35% 30%, #c66f83, #a64f67 65%, #843d52); font: 700 1.1rem/1 'Playfair Display', Georgia, serif; }
+      .music-disc.is-playing .music-disc__record { animation: record-spin 3s linear infinite; }
+      .music-disc__status { padding: .2rem .55rem; border: 1px solid rgba(197, 164, 125, .55); border-radius: 999px; color: #71384b; background: rgba(245, 237, 223, .9); font: 600 .78rem/1.2 'Cormorant Garamond', Georgia, serif; white-space: nowrap; }
+      .music-volume { display: grid; grid-template-columns: auto minmax(4rem, 6rem); align-items: center; gap: .4rem; padding: .35rem .55rem; border: 1px solid rgba(197, 164, 125, .55); border-radius: 999px; color: #71384b; background: rgba(245, 237, 223, .92); font: 600 .78rem/1.2 'Cormorant Garamond', Georgia, serif; }
+      .music-volume input { width: 100%; height: 1rem; margin: 0; accent-color: #a64f67; cursor: pointer; }
+      .music-volume input:focus-visible { outline: 2px solid #704b20; outline-offset: 3px; }
+      @keyframes record-spin { to { transform: rotate(360deg); } }
+      @media (prefers-reduced-motion: reduce) { .music-disc.is-playing .music-disc__record { animation-duration: 12s; } }
+      @media (max-width: 759px) {
+        .site-nav { top: .35rem !important; right: .6rem !important; left: .6rem !important; max-width: none !important; gap: clamp(.3rem, 2vw, .65rem) !important; }
+      }
+      .envelope-intro {
+        position: fixed;
+        z-index: 1000;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        padding: 24px;
+        overflow: hidden;
+        background: linear-gradient(135deg, rgba(246, 229, 225, .62), rgba(232, 222, 202, .48)), #e8deca center 52% / cover no-repeat;
+        opacity: 1;
+        visibility: visible;
+        transition: opacity .8s ease, visibility .8s ease;
+      }
+      .envelope-intro.is-dismissed { opacity: 0; visibility: hidden; pointer-events: none; }
+      .envelope-intro__content { width: min(100%, 720px); text-align: center; color: #49382f; }
+      .envelope-intro__eyebrow { margin: 0 0 30px; color: #794653; font: 700 clamp(1.45rem, 3vw, 2rem)/1.1 'Caveat', cursive; letter-spacing: .01em; text-transform: none; text-shadow: 0 1px 14px rgba(245, 237, 223, .9); }
+      .envelope-button { position: relative; display: block; width: min(78vw, 620px); aspect-ratio: 1.55; margin: 0 auto 30px; padding: 0; border: 0; background: transparent; cursor: pointer; perspective: 1200px; -webkit-tap-highlight-color: transparent; filter: drop-shadow(0 24px 30px rgba(73, 56, 47, .27)); transition: transform .35s ease, filter .35s ease; }
+      .envelope-button:hover { transform: translateY(-6px); filter: drop-shadow(0 30px 34px rgba(73, 56, 47, .3)); }
+      .envelope-button:focus-visible { outline: 3px solid #a64f67; outline-offset: 8px; border-radius: 8px; }
+      .envelope__back, .envelope__front, .envelope__flap, .envelope__letter { position: absolute; }
+      .envelope__back { inset: 0; border: 1px solid rgba(133, 82, 69, .55); border-radius: 9px; background: linear-gradient(145deg, #efcfca, #dbaeb0); box-shadow: inset 0 0 0 7px rgba(255, 247, 237, .3), inset 0 0 0 9px rgba(166, 79, 103, .18); }
+      .envelope__letter { z-index: 1; left: 9%; right: 9%; top: 8%; height: 82%; display: grid; place-content: center; gap: 12px; border: 1px solid #c5a47d; outline: 1px solid rgba(197, 164, 125, .45); outline-offset: -8px; background: linear-gradient(135deg, #fffaf1, #f5e8dc); color: #794653; box-shadow: 0 8px 20px rgba(73, 56, 47, .12); transition: transform .8s cubic-bezier(.2,.75,.25,1) .2s; }
+      .envelope__letter span:first-child { font: 700 clamp(2.5rem, 7vw, 4.2rem)/.95 'Caveat', cursive; }
+      .envelope__letter span:last-child { font: italic 700 clamp(1rem, 2vw, 1.35rem)/1.2 'Playfair Display', Georgia, serif; letter-spacing: .02em; }
+      .envelope__front { z-index: 2; inset: 0; overflow: hidden; border-radius: 5px; background: linear-gradient(145deg, transparent 49.7%, #dbaeb0 50%) left/50.1% 100% no-repeat, linear-gradient(215deg, transparent 49.7%, #dbaeb0 50%) right/50.1% 100% no-repeat; }
+      .envelope__front::after { position: absolute; inset: 0; content: ''; background: linear-gradient(32deg, transparent 49.5%, #e8c6c0 50%) left bottom/50.1% 50% no-repeat, linear-gradient(-32deg, transparent 49.5%, #e8c6c0 50%) right bottom/50.1% 50% no-repeat; }
+      .envelope__flap { z-index: 3; inset: 0 0 auto; height: 58%; transform-origin: top; clip-path: polygon(0 0, 100% 0, 50% 100%); background: linear-gradient(145deg, #f1d9cf, #d6a4a7); transition: transform .65s ease, z-index 0s .32s; }
+      .envelope__seal { position: absolute; z-index: 4; top: 43%; left: 50%; display: grid; width: clamp(54px, 8vw, 76px); aspect-ratio: 1; place-items: center; transform: translate(-50%, -50%); border: 2px solid rgba(255, 231, 213, .58); border-radius: 50%; background: radial-gradient(circle at 32% 27%, #c66f83, #a64f67 62%, #843d52); color: #fff2e6; font: 700 clamp(1.3rem, 2vw, 1.7rem) 'Playfair Display', Georgia, serif; box-shadow: 0 0 0 4px rgba(166, 79, 103, .18), 0 5px 14px rgba(73, 56, 47, .28); transition: opacity .25s ease, transform .25s ease; }
+      .envelope-button.is-open .envelope__flap { z-index: 0; transform: rotateX(180deg); }
+      .envelope-button.is-open .envelope__letter { transform: translateY(-53%); }
+      .envelope-button.is-open .envelope__seal { opacity: 0; transform: translate(-50%, -50%) scale(.7); }
+      .envelope-intro__hint { margin: 0; color: #694b31; font: 700 clamp(1.35rem, 2.6vw, 1.8rem)/1.2 'Caveat', cursive; text-shadow: 0 1px 12px rgba(245, 237, 223, .9); }
+      .envelope-intro__skip { margin-top: 14px; padding: 8px 12px; border: 0; background: transparent; color: #794653; font: inherit; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+      @media (prefers-reduced-motion: reduce) { .envelope-intro, .envelope__letter, .envelope__flap, .envelope__seal { transition-duration: .01ms !important; transition-delay: 0ms !important; } }
+    </style>
   </head>
   <body>
     <div class="ambient-background" aria-hidden="true">
@@ -24,6 +109,20 @@
       <div class="ambient-background__layer"></div>
     </div>
     <a class="skip-link" href="#main">Skip to invitation</a>
+    <section class="envelope-intro" id="envelope-intro" role="dialog" aria-modal="true" aria-labelledby="envelope-title" aria-describedby="envelope-hint">
+      <div class="envelope-intro__content">
+        <p class="envelope-intro__eyebrow" id="envelope-title">A special invitation for you</p>
+        <button class="envelope-button" id="envelope-open" type="button" aria-label="Open Hannah's invitation">
+          <span class="envelope__back" aria-hidden="true"></span>
+          <span class="envelope__letter" aria-hidden="true"><span>Hannah, 18</span><span>You are invited</span></span>
+          <span class="envelope__front" aria-hidden="true"></span>
+          <span class="envelope__flap" aria-hidden="true"></span>
+          <span class="envelope__seal" aria-hidden="true">H</span>
+        </button>
+        <p class="envelope-intro__hint" id="envelope-hint">Tap the seal to open your invitation</p>
+        <button class="envelope-intro__skip" id="envelope-skip" type="button">Skip to the invitation</button>
+      </div>
+    </section>
 
     <nav class="site-nav" aria-label="Invitation sections">
       <a href="#invitation" aria-current="page">Home</a>
@@ -33,6 +132,18 @@
       <a href="#entourage">Entourage</a>
       <a href="#letter">Letter</a>
     </nav>
+
+    <div class="music-player">
+      <audio id="invitation-audio" src="assets_music/debut-song.mp3" preload="none" loop></audio>
+      <button class="music-disc" id="music-disc" type="button" aria-label="Play celebration music" aria-pressed="false">
+        <span class="music-disc__record" aria-hidden="true"><span class="music-disc__label">♫</span></span>
+        <span class="music-disc__status" id="music-status" aria-live="polite">Play music</span>
+      </button>
+      <label class="music-volume" for="music-volume">
+        <span>Volume</span>
+        <input id="music-volume" type="range" min="0" max="1" step="0.05" value="0.6" aria-label="Music volume" aria-valuetext="60 percent">
+      </label>
+    </div>
 
     <main id="main">
       <section class="scene scene-cover" id="invitation" aria-labelledby="cover-title">
@@ -93,9 +204,11 @@
           </figure>
         </div>
         <a class="scroll-note" href="#details">The evening awaits <span aria-hidden="true">↓</span></a>
+
       </section>
 
       <section class="scene scene-gallery" id="moments" aria-labelledby="moments-title">
+
         <div class="photo-backdrop gallery-backdrop" aria-hidden="true"></div>
         <div class="petal-rain" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span></div>
         <div class="gallery-content">
@@ -157,6 +270,7 @@
           <p class="gallery-hint" id="gallery-hint" aria-live="polite">Hover or focus on a polaroid to bring it closer. Move your pointer out of the gallery to reset.</p>
           <a class="ornate-link" href="#details"><span>Continue to details</span></a>
         </div>
+
       </section>
 
       <section class="scene scene-details" id="details" aria-labelledby="details-title">
@@ -175,8 +289,7 @@
           </dl>
           <a class="ornate-link" href="#attire"><span>Continue</span></a>
         </div>
-        <div class="balustrade" aria-hidden="true"></div>
-        <div class="waterline" aria-hidden="true"></div>
+
       </section>
 
       <section class="scene scene-attire" id="attire" aria-labelledby="attire-title">
@@ -209,8 +322,7 @@
           </div>
           <a class="ornate-link" href="#entourage"><span>Meet the entourage</span></a>
         </div>
-        <div class="balustrade" aria-hidden="true"></div>
-        <div class="waterline" aria-hidden="true"></div>
+
       </section>
 
       <section class="scene scene-entourage" id="entourage" aria-labelledby="entourage-title">
@@ -350,6 +462,7 @@
           </div>
           <a class="ornate-link" href="#letter"><span>Continue to Hannah's letter</span></a>
         </div>
+
       </section>
 
       <section class="scene scene-final" id="rsvp" aria-labelledby="rsvp-title">
@@ -397,10 +510,99 @@
           </details>
           <a class="ornate-link" href="#invitation"><span>Back to the beginning</span></a>
         </div>
+
         <div class="rose-corners" aria-hidden="true"><span>✿</span><span>❀</span><span>❀</span><span>✿</span></div>
       </section>
 
     </main>
+    <script>
+      (() => {
+        const audio = document.getElementById('invitation-audio');
+        const disc = document.getElementById('music-disc');
+        const status = document.getElementById('music-status');
+        const volume = document.getElementById('music-volume');
+        const envelope = document.getElementById('envelope-open');
+        const skip = document.getElementById('envelope-skip');
+        if (!audio || !disc || !status) return;
+        audio.volume = volume ? Number(volume.value) : 0.6;
+
+        volume?.addEventListener('input', () => {
+          audio.volume = Number(volume.value);
+          volume.setAttribute('aria-valuetext', `${Math.round(audio.volume * 100)} percent`);
+        });
+
+        async function playMusic() {
+          try {
+            await audio.play();
+            status.textContent = 'Pause music';
+            disc.setAttribute('aria-label', 'Pause celebration music');
+            disc.setAttribute('aria-pressed', 'true');
+            disc.classList.add('is-playing');
+          } catch (error) {
+            status.textContent = 'Tap to play music';
+            disc.setAttribute('aria-label', 'Play celebration music');
+            console.warn('Celebration music could not start.', error);
+          }
+        }
+
+        function pauseMusic() {
+          audio.pause();
+          status.textContent = 'Play music';
+          disc.setAttribute('aria-label', 'Play celebration music');
+          disc.setAttribute('aria-pressed', 'false');
+          disc.classList.remove('is-playing');
+        }
+
+        disc.addEventListener('click', () => audio.paused ? playMusic() : pauseMusic());
+        envelope?.addEventListener('click', playMusic);
+        skip?.addEventListener('click', playMusic);
+        audio.addEventListener('ended', pauseMusic);
+        audio.addEventListener('error', () => {
+          status.textContent = 'Music unavailable';
+          disc.disabled = true;
+          disc.setAttribute('aria-label', 'Celebration music unavailable');
+        });
+      })();
+    </script>
+    <script>
+      (() => {
+        const intro = document.getElementById('envelope-intro');
+        const envelope = document.getElementById('envelope-open');
+        const hint = document.getElementById('envelope-hint');
+        const skip = document.getElementById('envelope-skip');
+        if (!intro || !envelope || !hint || !skip) return;
+
+        const backdropBase = 'assets_design_backgrounds/web/pink-rose-blossom-archway-garden-pathway-photo_upscayl_6x_upscayl-standard-4x_web';
+        const backdropExtensions = ['jpg', 'jpeg', 'webp', 'png'];
+        function tryBackdrop(index) {
+          if (index >= backdropExtensions.length) return;
+          const image = new Image();
+          image.onload = () => {
+            intro.style.backgroundImage = `linear-gradient(135deg, rgba(246, 229, 225, .62), rgba(232, 222, 202, .48)), url("${backdropBase}.${backdropExtensions[index]}")`;
+            intro.style.backgroundPosition = 'center, center 52%';
+            intro.style.backgroundSize = 'cover, cover';
+            intro.style.backgroundRepeat = 'no-repeat, no-repeat';
+          };
+          image.onerror = () => tryBackdrop(index + 1);
+          image.src = `${backdropBase}.${backdropExtensions[index]}`;
+        }
+        tryBackdrop(0);
+
+        function dismissEnvelope() {
+          intro.classList.add('is-dismissed');
+          window.setTimeout(() => intro.remove(), 850);
+        }
+
+        envelope.addEventListener('click', () => {
+          if (envelope.classList.contains('is-open')) return;
+          envelope.classList.add('is-open');
+          envelope.setAttribute('aria-expanded', 'true');
+          hint.textContent = 'Your invitation is ready';
+          window.setTimeout(dismissEnvelope, 1150);
+        });
+        skip.addEventListener('click', dismissEnvelope);
+      })();
+    </script>
     <script>
       (() => {
         document.querySelectorAll('.petal-rain').forEach((rain) => {

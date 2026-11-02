@@ -52,14 +52,14 @@
       .cover-card { position: absolute; z-index: 5; }
       .cover-polaroids { position: absolute; z-index: 4; }
       .scroll-note { position: absolute; z-index: 3; }
-      .music-player { position: fixed; z-index: 30; right: 1.1rem; bottom: 1.1rem; display: grid; justify-items: center; gap: .35rem; }
-      .music-disc { display: grid; justify-items: center; gap: .35rem; padding: 0; border: 0; color: #71384b; background: transparent; cursor: pointer; }
+      .music-player { position: fixed; z-index: 30; right: 1.1rem; bottom: 1.1rem; display: flex; align-items: center; gap: .7rem; padding: .55rem .7rem .55rem .55rem; border: 1px solid rgba(197, 164, 125, .75); border-radius: 999px; background: rgba(245, 237, 223, .94); box-shadow: 0 5px 18px rgba(54, 35, 44, .22); }
+      .music-player audio { display: none !important; }
+      .music-disc { display: grid; grid-template-columns: 4.2rem auto; align-items: center; gap: .55rem; padding: 0; border: 0; color: #71384b; background: transparent; cursor: pointer; }
       .music-disc:focus-visible { outline: 3px solid #704b20; outline-offset: 5px; border-radius: 50%; }
-      .music-disc__record { display: grid; width: clamp(3.5rem, 7vw, 4.5rem); aspect-ratio: 1; place-items: center; border: 2px solid rgba(255, 242, 226, .75); border-radius: 50%; background: repeating-radial-gradient(circle, #402c37 0 2px, #543341 2px 3px, #382631 3px 5px); box-shadow: 0 4px 14px rgba(54, 35, 44, .32); }
-      .music-disc__label { display: grid; width: 36%; aspect-ratio: 1; place-items: center; border: 2px solid #f0c8bb; border-radius: 50%; color: #fff1e6; background: radial-gradient(circle at 35% 30%, #c66f83, #a64f67 65%, #843d52); font: 700 1.1rem/1 'Playfair Display', Georgia, serif; }
+      .music-disc__record { display: block; width: 4.2rem; height: 4.2rem; filter: drop-shadow(0 3px 6px rgba(54, 35, 44, .26)); }
       .music-disc.is-playing .music-disc__record { animation: record-spin 3s linear infinite; }
-      .music-disc__status { padding: .2rem .55rem; border: 1px solid rgba(197, 164, 125, .55); border-radius: 999px; color: #71384b; background: rgba(245, 237, 223, .9); font: 600 .78rem/1.2 'Cormorant Garamond', Georgia, serif; white-space: nowrap; }
-      .music-volume { display: grid; grid-template-columns: auto minmax(4rem, 6rem); align-items: center; gap: .4rem; padding: .35rem .55rem; border: 1px solid rgba(197, 164, 125, .55); border-radius: 999px; color: #71384b; background: rgba(245, 237, 223, .92); font: 600 .78rem/1.2 'Cormorant Garamond', Georgia, serif; }
+      .music-disc__status { min-width: 4.6rem; color: #71384b; font: 600 .82rem/1.2 'Cormorant Garamond', Georgia, serif; text-align: left; white-space: nowrap; }
+      .music-volume { display: grid; grid-template-columns: auto minmax(4rem, 6rem); align-items: center; gap: .4rem; padding-left: .65rem; border-left: 1px solid rgba(197, 164, 125, .65); color: #71384b; font: 600 .82rem/1.2 'Cormorant Garamond', Georgia, serif; }
       .music-volume input { width: 100%; height: 1rem; margin: 0; accent-color: #a64f67; cursor: pointer; }
       .music-volume input:focus-visible { outline: 2px solid #704b20; outline-offset: 3px; }
       @keyframes record-spin { to { transform: rotate(360deg); } }
@@ -136,7 +136,14 @@
     <div class="music-player">
       <audio id="invitation-audio" src="assets_music/debut-song.mp3" preload="none" loop></audio>
       <button class="music-disc" id="music-disc" type="button" aria-label="Play celebration music" aria-pressed="false">
-        <span class="music-disc__record" aria-hidden="true"><span class="music-disc__label">♫</span></span>
+        <svg class="music-disc__record" viewBox="0 0 72 72" role="img" aria-label="Vinyl record">
+          <circle cx="36" cy="36" r="34" fill="#392832" stroke="#f5eddf" stroke-width="2"/>
+          <circle cx="36" cy="36" r="28" fill="none" stroke="#755c68" stroke-width="1"/>
+          <circle cx="36" cy="36" r="24" fill="none" stroke="#755c68" stroke-width="1"/>
+          <circle cx="36" cy="36" r="20" fill="none" stroke="#755c68" stroke-width="1"/>
+          <circle cx="36" cy="36" r="14" fill="#a64f67" stroke="#f0c8bb" stroke-width="2"/>
+          <text x="36" y="42" fill="#fff1e6" font-family="Georgia,serif" font-size="17" font-weight="700" text-anchor="middle">♫</text>
+        </svg>
         <span class="music-disc__status" id="music-status" aria-live="polite">Play music</span>
       </button>
       <label class="music-volume" for="music-volume">

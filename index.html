@@ -52,20 +52,32 @@
       .cover-card { position: absolute; z-index: 5; }
       .cover-polaroids { position: absolute; z-index: 4; }
       .scroll-note { position: absolute; z-index: 3; }
-      .music-player { position: fixed; z-index: 30; right: 1.1rem; bottom: 1.1rem; display: flex; align-items: center; gap: .7rem; padding: .55rem .7rem .55rem .55rem; border: 1px solid rgba(197, 164, 125, .75); border-radius: 999px; background: rgba(245, 237, 223, .94); box-shadow: 0 5px 18px rgba(54, 35, 44, .22); }
+      .music-player { position: fixed !important; z-index: 30; right: auto !important; bottom: max(.75rem, env(safe-area-inset-bottom)) !important; left: max(.75rem, env(safe-area-inset-left)) !important; display: grid; width: 4.7rem; height: 4.7rem; place-items: center; padding: .35rem; border: 1px solid rgba(255, 249, 238, .92); border-radius: 999px; background: rgba(245, 237, 223, .96); box-shadow: 0 7px 24px rgba(54, 35, 44, .25); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); transition: width .22s ease, border-radius .22s ease; }
+      .music-player.is-expanded { grid-template-columns: 3.8rem minmax(0, 1fr); column-gap: .65rem; width: min(25rem, calc(100vw - 1.5rem)); height: auto; min-height: 4.7rem; padding: .45rem .85rem .45rem .45rem; border-radius: 999px; }
       .music-player audio { display: none !important; }
-      .music-disc { display: grid; grid-template-columns: 4.2rem auto; align-items: center; gap: .55rem; padding: 0; border: 0; color: #71384b; background: transparent; cursor: pointer; }
+      .music-disc { display: grid; width: 100%; height: 100%; place-items: center; padding: 0; border: 0; border-radius: 50%; color: #71384b; background: transparent; cursor: pointer; }
       .music-disc:focus-visible { outline: 3px solid #704b20; outline-offset: 5px; border-radius: 50%; }
-      .music-disc__record { display: block; width: 4.2rem; height: 4.2rem; filter: drop-shadow(0 3px 6px rgba(54, 35, 44, .26)); }
+      .music-disc__record { display: block; width: 3.8rem; height: 3.8rem; filter: drop-shadow(0 3px 6px rgba(54, 35, 44, .26)); }
       .music-disc.is-playing .music-disc__record { animation: record-spin 3s linear infinite; }
-      .music-disc__status { min-width: 4.6rem; color: #71384b; font: 600 .82rem/1.2 'Cormorant Garamond', Georgia, serif; text-align: left; white-space: nowrap; }
-      .music-volume { display: grid; grid-template-columns: auto minmax(4rem, 6rem); align-items: center; gap: .4rem; padding-left: .65rem; border-left: 1px solid rgba(197, 164, 125, .65); color: #71384b; font: 600 .82rem/1.2 'Cormorant Garamond', Georgia, serif; }
-      .music-volume input { width: 100%; height: 1rem; margin: 0; accent-color: #a64f67; cursor: pointer; }
+      .music-controls { display: flex; min-width: 0; align-items: center; gap: .55rem; }
+      .music-controls[hidden] { display: none !important; }
+      .music-toggle { flex: 0 0 auto; padding: .25rem 0; border: 0; color: #71384b; background: transparent; cursor: pointer; font: 600 .84rem/1.2 'Cormorant Garamond', Georgia, serif; white-space: nowrap; }
+      .music-toggle:focus-visible { outline: 2px solid #704b20; outline-offset: 3px; border-radius: 3px; }
+      .music-volume { display: grid; grid-template-columns: auto minmax(3.25rem, 1fr); align-items: center; gap: .5rem; flex: 1 1 auto; min-width: 0; padding-left: .65rem; border-left: 1px solid rgba(197, 164, 125, .8); color: #71384b; font: 600 .82rem/1.2 'Cormorant Garamond', Georgia, serif; }
+      .music-volume input { width: 100%; height: 1.1rem; margin: 0; appearance: none; -webkit-appearance: none; border-radius: 999px; background: linear-gradient(to right, #a64f67 var(--volume-level, 60%), #d8c9b0 var(--volume-level, 60%)); cursor: pointer; }
+      .music-volume input::-webkit-slider-thumb { width: .9rem; height: .9rem; appearance: none; -webkit-appearance: none; border: 2px solid #fff8ee; border-radius: 50%; background: #a64f67; box-shadow: 0 1px 4px rgba(54, 35, 44, .3); }
+      .music-volume input::-moz-range-thumb { width: .68rem; height: .68rem; border: 2px solid #fff8ee; border-radius: 50%; background: #a64f67; box-shadow: 0 1px 4px rgba(54, 35, 44, .3); }
       .music-volume input:focus-visible { outline: 2px solid #704b20; outline-offset: 3px; }
       @keyframes record-spin { to { transform: rotate(360deg); } }
       @media (prefers-reduced-motion: reduce) { .music-disc.is-playing .music-disc__record { animation-duration: 12s; } }
       @media (max-width: 759px) {
         .site-nav { top: .35rem !important; right: .6rem !important; left: .6rem !important; max-width: none !important; gap: clamp(.3rem, 2vw, .65rem) !important; }
+      }
+      @media (max-width: 360px) {
+        .music-player.is-expanded { grid-template-columns: 3.35rem minmax(0, 1fr); column-gap: .45rem; padding-right: .6rem; }
+        .music-player.is-expanded .music-disc__record { width: 3.35rem; height: 3.35rem; }
+        .music-controls { gap: .35rem; }
+        .music-volume { grid-template-columns: auto minmax(2.5rem, 1fr); gap: .35rem; padding-left: .45rem; }
       }
       .envelope-intro {
         position: fixed;
@@ -135,7 +147,7 @@
 
     <div class="music-player">
       <audio id="invitation-audio" src="assets_music/debut-song.mp3" preload="none" loop></audio>
-      <button class="music-disc" id="music-disc" type="button" aria-label="Play celebration music" aria-pressed="false">
+      <button class="music-disc" id="music-disc" type="button" aria-label="Show music controls" aria-expanded="false" aria-controls="music-controls">
         <svg class="music-disc__record" viewBox="0 0 72 72" role="img" aria-label="Vinyl record">
           <circle cx="36" cy="36" r="34" fill="#392832" stroke="#f5eddf" stroke-width="2"/>
           <circle cx="36" cy="36" r="28" fill="none" stroke="#755c68" stroke-width="1"/>
@@ -144,12 +156,14 @@
           <circle cx="36" cy="36" r="14" fill="#a64f67" stroke="#f0c8bb" stroke-width="2"/>
           <text x="36" y="42" fill="#fff1e6" font-family="Georgia,serif" font-size="17" font-weight="700" text-anchor="middle">♫</text>
         </svg>
-        <span class="music-disc__status" id="music-status" aria-live="polite">Play music</span>
       </button>
-      <label class="music-volume" for="music-volume">
-        <span>Volume</span>
-        <input id="music-volume" type="range" min="0" max="1" step="0.05" value="0.6" aria-label="Music volume" aria-valuetext="60 percent">
-      </label>
+      <div class="music-controls" id="music-controls" hidden>
+        <button class="music-toggle" id="music-toggle" type="button">Play music</button>
+        <label class="music-volume" for="music-volume">
+          <span>Volume</span>
+          <input id="music-volume" type="range" min="0" max="1" step="0.05" value="0.6" aria-label="Music volume" aria-valuetext="60 percent">
+        </label>
+      </div>
     </div>
 
     <main id="main">
@@ -525,49 +539,53 @@
     <script>
       (() => {
         const audio = document.getElementById('invitation-audio');
+        const player = document.querySelector('.music-player');
         const disc = document.getElementById('music-disc');
-        const status = document.getElementById('music-status');
+        const controls = document.getElementById('music-controls');
+        const toggle = document.getElementById('music-toggle');
         const volume = document.getElementById('music-volume');
         const envelope = document.getElementById('envelope-open');
         const skip = document.getElementById('envelope-skip');
-        if (!audio || !disc || !status) return;
+        if (!audio || !player || !disc || !controls || !toggle) return;
         audio.volume = volume ? Number(volume.value) : 0.6;
 
+        if (volume) volume.style.setProperty('--volume-level', `${Number(volume.value) * 100}%`);
         volume?.addEventListener('input', () => {
           audio.volume = Number(volume.value);
+          volume.style.setProperty('--volume-level', `${audio.volume * 100}%`);
           volume.setAttribute('aria-valuetext', `${Math.round(audio.volume * 100)} percent`);
         });
 
         async function playMusic() {
           try {
             await audio.play();
-            status.textContent = 'Pause music';
-            disc.setAttribute('aria-label', 'Pause celebration music');
-            disc.setAttribute('aria-pressed', 'true');
+            toggle.textContent = 'Pause music';
             disc.classList.add('is-playing');
           } catch (error) {
-            status.textContent = 'Tap to play music';
-            disc.setAttribute('aria-label', 'Play celebration music');
+            toggle.textContent = 'Tap to play';
             console.warn('Celebration music could not start.', error);
           }
         }
 
         function pauseMusic() {
           audio.pause();
-          status.textContent = 'Play music';
-          disc.setAttribute('aria-label', 'Play celebration music');
-          disc.setAttribute('aria-pressed', 'false');
+          toggle.textContent = 'Play music';
           disc.classList.remove('is-playing');
         }
 
-        disc.addEventListener('click', () => audio.paused ? playMusic() : pauseMusic());
+        disc.addEventListener('click', () => {
+          const expanded = controls.hidden;
+          controls.hidden = !expanded;
+          player.classList.toggle('is-expanded', expanded);
+          disc.setAttribute('aria-expanded', String(expanded));
+        });
+        toggle.addEventListener('click', () => audio.paused ? playMusic() : pauseMusic());
         envelope?.addEventListener('click', playMusic);
         skip?.addEventListener('click', playMusic);
         audio.addEventListener('ended', pauseMusic);
         audio.addEventListener('error', () => {
-          status.textContent = 'Music unavailable';
-          disc.disabled = true;
-          disc.setAttribute('aria-label', 'Celebration music unavailable');
+          toggle.textContent = 'Music unavailable';
+          toggle.disabled = true;
         });
       })();
     </script>

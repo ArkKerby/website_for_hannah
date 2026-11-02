@@ -73,6 +73,11 @@
       @media (max-width: 759px) {
         .site-nav { top: .35rem !important; right: .6rem !important; left: .6rem !important; max-width: none !important; gap: clamp(.3rem, 2vw, .65rem) !important; }
       }
+      @media (min-width: 760px) and (max-width: 1500px) {
+        .cover-card { top: 17%; left: 4%; width: 46vw; }
+        .cover-card h1 { font-size: clamp(3.8rem, 7.2vw, 5.2rem); }
+        .cover-polaroids { top: 18%; right: 2%; width: 45vw; height: 70%; }
+      }
       @media (max-width: 360px) {
         .music-player.is-expanded { grid-template-columns: 3.35rem minmax(0, 1fr); column-gap: .45rem; padding-right: .6rem; }
         .music-player.is-expanded .music-disc__record { width: 3.35rem; height: 3.35rem; }
@@ -573,11 +578,15 @@
           disc.classList.remove('is-playing');
         }
 
-        disc.addEventListener('click', () => {
-          const expanded = controls.hidden;
+        function setControlsExpanded(expanded) {
           controls.hidden = !expanded;
           player.classList.toggle('is-expanded', expanded);
           disc.setAttribute('aria-expanded', String(expanded));
+        }
+
+        disc.addEventListener('click', () => setControlsExpanded(controls.hidden));
+        window.addEventListener('resize', () => {
+          if (window.innerWidth < 1100 && !controls.hidden) setControlsExpanded(false);
         });
         toggle.addEventListener('click', () => audio.paused ? playMusic() : pauseMusic());
         envelope?.addEventListener('click', playMusic);
@@ -825,6 +834,23 @@
             buttonLabel.textContent = initialButtonLabel;
           }
         });
+      })();
+    </script>
+    <script>
+      (() => {
+        const qr = document.getElementById('invitation-qr');
+        if (!qr) return;
+        const invitationUrl = new URL(window.location.href);
+        invitationUrl.search = '';
+        invitationUrl.hash = '';
+        const qrUrl = new URL('https://api.qrserver.com/v1/create-qr-code/');
+        qrUrl.searchParams.set('data', invitationUrl.href);
+        qrUrl.searchParams.set('size', '420x420');
+        qrUrl.searchParams.set('format', 'png');
+        qrUrl.searchParams.set('color', '405238');
+        qrUrl.searchParams.set('bgcolor', 'fffdf3');
+        qrUrl.searchParams.set('qzone', '4');
+        qr.src = qrUrl.href;
       })();
     </script>
     <script>

@@ -117,9 +117,14 @@ module.exports = async function rsvpHandler(req, res) {
     try { body = JSON.parse(body); } catch { body = {}; }
   }
 
-  // Quietly ignore bots that fill the visually hidden field.
-  if (String(body.website || '').trim()) {
-    return sendJson(res, 200, { ok: true, attendance: 'No' });
+  // Keep support for the previous field name so cached pages are handled safely.
+  // Never report success for a trapped request; that could mislead a real guest
+  // if a browser autofills the hidden field.
+  if ([body.fax_number, body.website].some((value) => String(value || '').trim())) {
+    return sendJson(res, 400, {
+      ok: false,
+      message: 'We could not submit your RSVP. Please reload the page and try again.'
+    });
   }
 
   const name = String(body.name || '').replace(/[\u0000-\u001f\u007f]/g, ' ').replace(/\s+/g, ' ').trim();

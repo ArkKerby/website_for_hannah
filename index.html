@@ -5,6 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#e8deca">
     <meta name="description" content="Join Hannah to celebrate her eighteenth birthday in a Regency garden setting.">
+    <link rel="canonical" href="https://websiteforhannah.vercel.app/">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Hannah's Debut">
+    <meta property="og:title" content="Hannah, 18 — An Invitation to Her Debut">
+    <meta property="og:description" content="Join Hannah to celebrate her eighteenth birthday in a Regency garden setting.">
+    <meta property="og:url" content="https://websiteforhannah.vercel.app/">
+    <meta property="og:image" content="https://websiteforhannah.vercel.app/photoshots/web/gallery-optimized/Hannah18th-37.jpg">
+    <meta property="og:image:secure_url" content="https://websiteforhannah.vercel.app/photoshots/web/gallery-optimized/Hannah18th-37.jpg">
+    <meta property="og:image:type" content="image/jpeg">
+    <meta property="og:image:width" content="1800">
+    <meta property="og:image:height" content="1200">
+    <meta property="og:image:alt" content="Hannah celebrating her eighteenth birthday in the garden">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Hannah, 18 — An Invitation to Her Debut">
+    <meta name="twitter:description" content="Join Hannah to celebrate her eighteenth birthday in a Regency garden setting.">
+    <meta name="twitter:image" content="https://websiteforhannah.vercel.app/photoshots/web/gallery-optimized/Hannah18th-37.jpg">
+    <meta name="twitter:image:alt" content="Hannah celebrating her eighteenth birthday in the garden">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="Hannah, 18">
@@ -19,30 +36,6 @@
     <link rel="stylesheet" href="styles.css">
     <style>
       html, body { margin: 0 !important; padding: 0 !important; }
-      .site-nav {
-        position: absolute !important;
-        z-index: 8 !important;
-        top: 1.15rem !important;
-        right: clamp(1rem, 4vw, 4rem) !important;
-        left: auto !important;
-        box-sizing: border-box !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        gap: clamp(12px, 2vw, 32px) !important;
-        width: auto !important;
-        max-width: calc(100% - 2rem) !important;
-        min-height: 0 !important;
-        height: auto !important;
-        padding: 0 !important;
-        margin: 0 !important;
-        border: 0 !important;
-        box-shadow: none !important;
-        background: transparent !important;
-        -webkit-backdrop-filter: none !important;
-        backdrop-filter: none !important;
-      }
-      .site-nav::before, .site-nav::after { display: none !important; content: none !important; }
       .scene > .balustrade { z-index: -1 !important; pointer-events: none !important; }
       .cover-card, .cover-polaroids, .scroll-note, .gallery-content, .detail-card,
       .entourage-content, .letter-frame {
@@ -70,9 +63,6 @@
       .music-volume input:focus-visible { outline: 2px solid #704b20; outline-offset: 3px; }
       @keyframes record-spin { to { transform: rotate(360deg); } }
       @media (prefers-reduced-motion: reduce) { .music-disc.is-playing .music-disc__record { animation-duration: 12s; } }
-      @media (max-width: 759px) {
-        .site-nav { top: .35rem !important; right: .6rem !important; left: .6rem !important; max-width: none !important; gap: clamp(.3rem, 2vw, .65rem) !important; }
-      }
       @media (min-width: 760px) and (max-width: 1500px) {
         .cover-card { top: 17%; left: 4%; width: 46vw; }
         .cover-card h1 { font-size: clamp(3.8rem, 7.2vw, 5.2rem); }
@@ -144,15 +134,6 @@
         <button class="envelope-intro__skip" id="envelope-skip" type="button">Skip to the invitation</button>
       </div>
     </section>
-
-    <nav class="site-nav" aria-label="Invitation sections">
-      <a href="#invitation" aria-current="page">Home</a>
-      <a href="#moments">Photos</a>
-      <a href="#details">Details</a>
-      <a href="#attire">Dress code</a>
-      <a href="#entourage">Entourage</a>
-      <a href="#letter">Letter</a>
-    </nav>
 
     <div class="music-player">
       <audio id="invitation-audio" src="assets_music/debut-song.mp3" preload="none" loop></audio>
@@ -233,7 +214,6 @@
             <figcaption>A birthday daydream</figcaption>
           </figure>
         </div>
-        <a class="scroll-note" href="#details">The evening awaits <span aria-hidden="true">↓</span></a>
 
       </section>
 
@@ -332,7 +312,7 @@
           <h2 id="attire-title">The Dress Code</h2>
           <dl class="event-facts">
             <div><dt>Theme</dt><dd>Parisian Elegance</dd></div>
-            <div><dt>Attire</dt><dd>Formal Attire for 18th Roses "BLACK COAT"</dd></div>
+            <div><dt>Attire</dt><dd>Formal Attire for 18 ROSES "BLACK COAT"</dd></div>
             <div><dt>Secondary Attire</dt><dd>Semi Formal for 18 CANDLES, GIFTS, SHOTS, BILLS</dd></div>
             <div><dt>Guest</dt><dd>Semi Formal</dd></div>
           </dl>
@@ -350,7 +330,7 @@
             <h3>Gift Guide</h3>
             <p>Your presence is the greatest gift. If you wish to give, monetary gifts would be warmly appreciated.</p>
           </div>
-          <a class="ornate-link" href="#entourage"><span>Meet the entourage</span></a>
+          <a class="ornate-link" href="#entourage"><span>Meet the 18 traditions</span></a>
         </div>
 
       </section>
@@ -462,30 +442,30 @@
 
             <details class="entourage-group">
               <summary><span>18 Bills</span><span class="entourage-count">24 names</span></summary>
-              <ol>
-                <li>Ninang Maricel</li>
-                <li>Ninang Jhayzel</li>
-                <li>Ninang Maurene</li>
-                <li>Ninang Faye</li>
+              <ol class="bills-list">
+                <li>Ninang Maricel Llorca</li>
+                <li>Ninang Jhaycel Peregil</li>
+                <li>Ninang Maurene Cristales</li>
+                <li>Ninang Faye Fuentes</li>
                 <li>Ninang Nene</li>
-                <li>Ninang Cristine</li>
-                <li>Ninang Honeylyn</li>
-                <li>Ninang Lucrecia</li>
-                <li>Ninang Deyi</li>
-                <li>Ninang Aida</li>
-                <li>Ninang Lyd</li>
+                <li>Ninang Cristine Cruz</li>
+                <li>Ninang Honeylyn Fernandez</li>
+                <li>Ninang Lucrecia Valdez</li>
+                <li>Ninang Dalia Medrano</li>
+                <li>Ninang Aida Antonio</li>
+                <li>Ninang Cris Millan</li>
                 <li>Ninang Dayang</li>
-                <li>Ninang Mariz</li>
-                <li>Ninong Amang</li>
-                <li>Ninong Rey</li>
-                <li>Ninong Ryan</li>
-                <li>Ninong Reymark</li>
-                <li>Ninong Rommel</li>
-                <li>Ninong Carlito</li>
-                <li>Ninong Delfin</li>
-                <li>Ninong Omeng</li>
-                <li>Ninong German</li>
-                <li>Ninang Miriam</li>
+                <li>Ninang Mariz De Guzman</li>
+                <li>Ninang Miriam Alcantara</li>
+                <li>Ninong Renato Malicdem</li>
+                <li>Ninong Ryan Tenorio</li>
+                <li>Ninong Krahmyer Bianan</li>
+                <li>Ninong Rommel Galarpe</li>
+                <li>Ninong Renato Mobles</li>
+                <li>Ninong Carlito Millan</li>
+                <li>Ninong Delfin Robles</li>
+                <li>Ninong Samuel Opiaza</li>
+                <li>Ninong German Olivar</li>
                 <li>Ninong Jhun Vasco</li>
               </ol>
             </details>
@@ -501,7 +481,7 @@
         <div class="letter-frame rsvp-frame">
           <p class="rsvp-policy">Strictly no Plus 1</p>
           <p class="eyebrow">We look forward to celebrating with you</p>
-          <h2 id="rsvp-title">Kindly RSVP</h2>
+          <h2 id="rsvp-title">RSVP</h2>
           <p class="rsvp-copy">Tell us if you can join Hannah, and we'll send your personal entrance confirmation by email.</p>
           <form class="rsvp-form" id="rsvp-form" autocomplete="on">
             <label class="rsvp-field" for="rsvp-email">
@@ -518,8 +498,8 @@
               <label class="rsvp-choice"><input type="radio" name="attendance" value="No" required><span>No, I can't attend</span></label>
             </fieldset>
             <div class="rsvp-trap" aria-hidden="true">
-              <label for="rsvp-website">Leave this field empty</label>
-              <input id="rsvp-website" name="website" type="text" tabindex="-1" autocomplete="off">
+              <label for="rsvp-fax">Leave this field empty</label>
+              <input id="rsvp-fax" name="fax_number" type="text" tabindex="-1" autocomplete="off">
             </div>
             <button class="ornate-link rsvp-submit" type="submit"><span>Confirm my RSVP</span></button>
             <p class="rsvp-response" id="rsvp-response" role="status" aria-live="polite"></p>
@@ -771,10 +751,12 @@
           .replace(/[^a-z0-9]+/g, ' ')
           .trim();
 
+        const removeRolePrefix = (value) => String(value).replace(/^\s*(?:ninang|ninong)\.?\s+/i, '');
+
         function getTradition(name) {
-          const normalizedName = normalizeName(name);
+          const normalizedName = normalizeName(removeRolePrefix(name));
           for (const group of document.querySelectorAll('.entourage-group')) {
-            const names = [...group.querySelectorAll('li')].map((item) => normalizeName(item.textContent));
+            const names = [...group.querySelectorAll('li')].map((item) => normalizeName(removeRolePrefix(item.textContent)));
             if (names.includes(normalizedName)) {
               return group.querySelector('summary span')?.textContent.trim() || 'Other Guest';
             }

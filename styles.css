@@ -69,32 +69,6 @@ img { max-width: 100%; }
   border-radius: 999px;
 }
 .skip-link:focus { transform: translateY(0); }
-.site-nav {
-  position: fixed;
-  z-index: 8;
-  top: 1.15rem;
-  right: clamp(1rem, 4vw, 4rem);
-  display: flex;
-  max-width: calc(100% - 2rem);
-  justify-content: center;
-  gap: clamp(.5rem, 2vw, 1.7rem);
-  padding: 0;
-  overflow-x: auto;
-  background: transparent;
-}
-.site-nav a {
-  flex: 0 0 auto;
-  padding: .3rem .08rem .45rem;
-  border-bottom: 1px solid transparent;
-  color: #633747;
-  font-family: var(--serif);
-  font-size: .72rem;
-  font-weight: 600;
-  text-decoration: none;
-  transition: color .18s ease, border-color .18s ease;
-}
-.site-nav a:hover, .site-nav a:focus-visible, .site-nav a[aria-current="page"] { color: var(--rose); border-color: var(--rose); }
-
 .scene {
   position: relative;
   z-index: 1;
@@ -632,6 +606,7 @@ h2 {
 .entourage-group summary:focus-visible { outline: 3px solid #ad6827; outline-offset: 3px; border-radius: .4rem; }
 .entourage-count { margin-left: auto; color: #a8753e; font-family: var(--handwritten); font-size: 1.15rem; font-weight: 700; }
 .entourage-group ol { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .35rem 1.5rem; margin: 0; padding: .15rem 1rem 1.2rem 2.8rem; color: #76523a; font-size: 1.08rem; line-height: 1.2; }
+.entourage-group ol.bills-list { list-style: none; padding-left: 1rem; }
 .entourage-group li { min-width: 0; padding-left: .15rem; overflow-wrap: anywhere; }
 .scene-entourage > .entourage-content > .ornate-link { margin: 0 auto; }
 #entourage { scroll-margin-top: 5rem; }
@@ -681,8 +656,6 @@ h2 {
 .rose-corners span:nth-child(4) { bottom: 3%; left: 6%; color: #c18a8d; font-size: clamp(2.4rem, 8vw, 4rem); }
 
 @media (min-width: 760px) {
-  .site-nav { top: 1.15rem; gap: clamp(.8rem, 2vw, 1.7rem); padding: 0; }
-  .site-nav a { padding: .3rem .08rem .45rem; font-size: 1.5rem; }
   .scene-cover { padding: 0; }
   .scene-details, .scene-attire { padding-top: 6rem; padding-bottom: 14rem; }
   .curtain { width: min(25vw, 17rem); }
@@ -704,13 +677,12 @@ h2 {
   .photo-card:nth-child(8) { bottom: 4%; right: 2%; width: 23%; }
 }
 @media (max-width: 759px) {
-  .site-nav { top: .35rem; right: .6rem; left: .6rem; justify-content: flex-end; gap: clamp(.3rem, 2vw, .65rem); max-width: none; }
-  .site-nav a { min-height: 2.75rem; padding: .65rem .04rem .55rem; font-size: clamp(.64rem, 2.7vw, .76rem); }
   .scene-entourage { padding: 5.25rem .85rem 4rem; }
   .entourage-intro { margin-bottom: 1.4rem; }
   .entourage-grid { grid-template-columns: minmax(0, 1fr); gap: .75rem; }
   .entourage-group summary { min-height: 3.5rem; padding: .65rem .8rem; }
   .entourage-group ol { grid-template-columns: minmax(0, 1fr); gap: .35rem; padding: .1rem .85rem 1rem 2.4rem; font-size: 1.05rem; }
+  .entourage-group ol.bills-list { padding-left: .85rem; }
   .scene-cover { min-height: 1120px; padding: 0; }
   .cover-logo { top: .65rem; left: .85rem; font-size: 1.55rem; }
   .cover-card { top: 13%; left: 6%; width: 88%; }

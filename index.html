@@ -820,8 +820,8 @@
 
             responseText.dataset.state = 'success';
             responseText.textContent = submission.attendance === 'Yes'
-              ? `You're confirmed. Check ${submission.email} for your entrance email and ticket code${receipt.ticketCode ? ` ${receipt.ticketCode}` : ''}. Strictly no Plus 1.`
-              : `Thank you for letting us know. Your response was recorded and a confirmation was sent to ${submission.email}.`;
+              ? `You're confirmed. Check ${submission.email} for your entrance email and ticket code${receipt.ticketCode ? ` ${receipt.ticketCode}` : ''}. If it isn't in your Inbox, check Spam/Junk. Strictly no Plus 1.`
+              : `Thank you for letting us know. Your response was recorded and a confirmation was sent to ${submission.email}. If it isn't in your Inbox, check Spam/Junk.`;
           } catch (error) {
             responseText.dataset.state = 'error';
             responseText.textContent = error instanceof TypeError

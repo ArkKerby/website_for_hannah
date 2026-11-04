@@ -16,6 +16,8 @@ The script creates a separate `RSVP Responses` tab and adds these columns:
 
 The same email address updates its existing row if the guest changes their answer. Each guest should submit their own email. A Yes response receives an entry code by email; a No response receives an acknowledgement without an entry code. Both messages say there is no plus one.
 
+After each submission, the script keeps all responses in this one tab and sorts the rows by Tradition, then Name. The header row and existing columns stay in place. It also changes older singular labels such as `18 Gift` to the current `18 Gifts` label. Running `authorizeRsvpServices` sorts the responses already in the sheet as well.
+
 ## One-time Google Apps Script deployment
 
 1. Open the linked spreadsheet while signed in as `marklaguador09@gmail.com`. Make sure that account has Editor access. Keep the spreadsheet restricted to the people who need it, since it will contain guest emails and RSVP answers.
@@ -49,7 +51,7 @@ The web app runs with the deploying account's access and sends the mail using Ap
 
 ## Safe setup check
 
-After updating `apps-script/Code.gs`, select `authorizeRsvpServices` in the Apps Script function picker and click **Run**. Approve the spreadsheet and email permissions while signed in as the web app owner. This creates the response tab and headers but sends no email.
+After updating `apps-script/Code.gs`, select `authorizeRsvpServices` in the Apps Script function picker and click **Run**. Approve the spreadsheet and email permissions while signed in as the web app owner. This creates the response tab and headers, sorts existing RSVP rows, and sends no email.
 
 Then choose **Deploy -> Manage deployments**, edit the existing web app deployment, select **New version**, and deploy it. Keep **Execute as** set to the owner and access set to **Anyone**. This preserves the existing `/exec` URL. The updated code supports a no-email setup check. After the Vercel deployment completes, open:
 

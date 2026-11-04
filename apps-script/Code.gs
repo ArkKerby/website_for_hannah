@@ -93,6 +93,7 @@ function doPost(event) {
     HEADERS.forEach((header) => sheet.getRange(row, columns[header]).setValue(safeText_(values[header])));
     SpreadsheetApp.flush();
 
+    let emailSent = false;
     try {
       MailApp.sendEmail({
         to: email,
@@ -104,13 +105,16 @@ function doPost(event) {
       });
       sheet.getRange(row, columns['Confirmation Email Sent']).setValue('Yes');
       SpreadsheetApp.flush();
-      return json_({ ok: true, saved: true, emailSent: true });
+      emailSent = true;
     } catch (mailError) {
       console.error('RSVP was saved, but the confirmation email could not be sent.', mailError && mailError.stack || mailError);
       sheet.getRange(row, columns['Confirmation Email Sent']).setValue('No');
       SpreadsheetApp.flush();
-      return json_({ ok: false, saved: true, emailSent: false, code: 'EMAIL_SEND_FAILED', error: 'Email could not be sent.' });
     }
+
+    sortResponseRows_(sheet, columns);
+    if (emailSent) return json_({ ok: true, saved: true, emailSent: true });
+    return json_({ ok: false, saved: true, emailSent: false, code: 'EMAIL_SEND_FAILED', error: 'Email could not be sent.' });
   } catch (error) {
     console.error('RSVP could not be saved to the spreadsheet.', error && error.stack || error);
     return json_({ ok: false, code: 'SPREADSHEET_WRITE_FAILED', error: 'RSVP could not be saved. Check the sheet permissions and setup.' });
@@ -129,7 +133,8 @@ function authorizeRsvpServices() {
   const spreadsheet = SpreadsheetApp.openById(spreadsheetId);
   let sheet = spreadsheet.getSheetByName(RESPONSE_TAB);
   if (!sheet) sheet = spreadsheet.insertSheet(RESPONSE_TAB);
-  ensureHeaders_(sheet);
+  const columns = ensureHeaders_(sheet);
+  sortResponseRows_(sheet, columns);
   SpreadsheetApp.flush();
 
   const emailQuotaRemaining = MailApp.getRemainingDailyQuota();
@@ -166,6 +171,43 @@ function findEmailRow_(sheet, emailColumn, email) {
     if (String(values[index][0]).trim().toLocaleLowerCase() === target) return index + 2;
   }
   return 0;
+}
+
+function sortResponseRows_(sheet, columns) {
+  try {
+    const lastRow = sheet.getLastRow();
+    if (lastRow < 2) return;
+
+    const traditionRange = sheet.getRange(2, columns.Tradition, lastRow - 1, 1);
+    const traditions = traditionRange.getDisplayValues();
+    const canonicalTraditions = traditions.map(([value]) => [canonicalTradition_(value)]);
+    if (canonicalTraditions.some(([value], index) => value !== traditions[index][0])) {
+      traditionRange.setValues(canonicalTraditions);
+    }
+
+    if (lastRow < 3) return;
+    const lastColumn = Math.max(sheet.getLastColumn(), HEADERS.length);
+    sheet.getRange(2, 1, lastRow - 1, lastColumn).sort([
+      { column: columns.Tradition, ascending: true },
+      { column: columns.Name, ascending: true }
+    ]);
+  } catch (error) {
+    console.error('RSVP rows could not be sorted by tradition.', error && error.stack || error);
+  }
+}
+
+function canonicalTradition_(value) {
+  const label = String(value || '').trim();
+  const normalized = label.toLocaleLowerCase();
+  const aliases = {
+    '18 rose': '18 Roses',
+    '18 candle': '18 Candles',
+    '18 gift': '18 Gifts',
+    '18 shot': '18 Shots',
+    '18 bill': '18 Bills'
+  };
+  if (aliases[normalized]) return aliases[normalized];
+  return TRADITIONS.find((tradition) => tradition.toLocaleLowerCase() === normalized) || label;
 }
 
 function confirmationMessage_(name, attendance, ticketCode) {

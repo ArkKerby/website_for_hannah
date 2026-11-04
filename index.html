@@ -752,11 +752,19 @@
           .trim();
 
         const removeRolePrefix = (value) => String(value).replace(/^\s*(?:ninang|ninong)\.?\s+/i, '');
+        const traditionNameKey = (value) => {
+          const parts = normalizeName(removeRolePrefix(value)).split(/\s+/).filter(Boolean);
+          if (parts.length < 3) return parts.join(' ');
+
+          // Guests may enter a middle initial that is not shown in the tradition list.
+          const withoutMiddleInitials = [parts[0], ...parts.slice(1, -1).filter((part) => part.length > 1), parts[parts.length - 1]];
+          return withoutMiddleInitials.join(' ');
+        };
 
         function getTradition(name) {
-          const normalizedName = normalizeName(removeRolePrefix(name));
+          const normalizedName = traditionNameKey(name);
           for (const group of document.querySelectorAll('.entourage-group')) {
-            const names = [...group.querySelectorAll('li')].map((item) => normalizeName(removeRolePrefix(item.textContent)));
+            const names = [...group.querySelectorAll('li')].map((item) => traditionNameKey(item.textContent));
             if (names.includes(normalizedName)) {
               return group.querySelector('summary span')?.textContent.trim() || 'Other Guest';
             }
